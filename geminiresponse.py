@@ -1,41 +1,8 @@
-# from google import genai
-
-# # Configure client
-# client = genai.Client(api_key="")
-
-
-# def ask_gemini(prompt):
-#     response = client.models.generate_content(
-#         model="gemini-flash-latest",
-#         contents=prompt
-#     )
-#     return response.text
-
-
-
-
-# def chatbot():
-#     print("Gemini Chatbot  (type 'exit' to quit)\n")
-
-#     while True:
-#         user_input = input("You: ")
-
-#         if user_input.lower() == "exit":
-#             break
-
-#         gemini_reply = ask_gemini(user_input)
-
-#         print("\n--- Gemini Response ---")
-#         print(gemini_reply)
-#         print("\n-----------------------\n")
-
-
-# chatbot()
-
-
 import os
 from google import genai
-
+import streamlit as st
+from dotenv import load_dotenv
+load_dotenv()
 # Read API key from environment variable
 api_key = os.getenv("GEMINI_API_KEY")
 
@@ -51,20 +18,32 @@ def ask_gemini(prompt):
     return response.text
 
 
-def chatbot():
-    print("Gemini Chatbot (type 'exit' to quit)\n")
+#streamlit ui
 
-    while True:
-        user_input = input("You: ")
+st.title("Gemini Chatbot")
 
-        if user_input.lower() == "exit":
-            break
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-        gemini_reply = ask_gemini(user_input)
+# Display previous messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-        print("\n--- Gemini Response ---")
-        print(gemini_reply)
-        print("\n-----------------------\n")
+# User input
+prompt = st.chat_input("Type your message...")
 
+if prompt:
+    # Show user message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.write(prompt)
 
-chatbot()
+    # Gemini response
+    reply = ask_gemini(prompt)
+
+    # Show bot response
+    st.session_state.messages.append({"role": "assistant", "content": reply})
+    with st.chat_message("assistant"):
+        st.write(reply)

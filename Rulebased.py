@@ -1,5 +1,5 @@
 import re
-
+import streamlit as st 
 def chatbot_response(user_input):
     user_input = user_input.lower()
 
@@ -31,19 +31,15 @@ def chatbot_response(user_input):
 
     return "I'm sorry, I didn't understand that. Could you please rephrase?"
 
-def chatbot():
-    print("Customer Support Bot : Type 'exit' to quit")
 
-    while True:
-        user_input = input("You: ")
+st.title("Customer Support Chatbot(Rule based)")
 
-        response = chatbot_response(user_input)
-        print("Bot:", response)
+user_input = st.text_input("You:")
 
-        if "exit" in user_input.lower():
-            break
+if st.button("Send"):
+    response = chatbot_response(user_input)
+    st.write("Bot:", response)
 
-chatbot()
 
 
 
