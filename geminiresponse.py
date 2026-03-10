@@ -10,11 +10,30 @@ api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
 
-def ask_gemini(prompt):
+SYSTEM_PROMPT = """
+You are a helpful customer support chatbot for an online store.
+
+Rules:
+- Answer politely.
+- Keep responses short.
+- If the question is unrelated to the store, say you can only help with store questions.
+"""
+
+def ask_gemini(user_prompt):
     response = client.models.generate_content(
         model="gemini-flash-latest",
-        contents=prompt
+        contents=[
+            {
+                "role": "user",
+                "parts": [{"text": SYSTEM_PROMPT}]
+            },
+            {
+                "role": "user",
+                "parts": [{"text": user_prompt}]
+            }
+        ]
     )
+
     return response.text
 
 
