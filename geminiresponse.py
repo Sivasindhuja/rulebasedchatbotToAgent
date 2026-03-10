@@ -19,19 +19,32 @@ Rules:
 - If the question is unrelated to the store, say you can only help with store questions.
 """
 
-def ask_gemini(user_prompt):
+def ask_gemini():
+
+    contents = []
+
+    # add system prompt
+    contents.append({
+        "role": "user",
+        "parts": [{"text": SYSTEM_PROMPT}]
+    })
+
+    # add conversation history
+    for msg in st.session_state.messages:
+        role = msg["role"]
+        text = msg["content"]
+
+        if role == "assistant":
+            role = "model"
+
+        contents.append({
+            "role": role,
+            "parts": [{"text": text}]
+        })
+
     response = client.models.generate_content(
         model="gemini-flash-latest",
-        contents=[
-            {
-                "role": "user",
-                "parts": [{"text": SYSTEM_PROMPT}]
-            },
-            {
-                "role": "user",
-                "parts": [{"text": user_prompt}]
-            }
-        ]
+        contents=contents
     )
 
     return response.text
