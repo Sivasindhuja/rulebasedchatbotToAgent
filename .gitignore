@@ -1,4 +1,5 @@
 .env
-geminiapikey.txt
-notes.txt
-openaikey.txt
+.python-version
+pyproject.toml
+uv.lock
+README.md
