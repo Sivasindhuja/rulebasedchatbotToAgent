@@ -1,5 +1,6 @@
 import re
 import streamlit as st 
+
 def chatbot_response(user_input):
     user_input = user_input.lower()
 
@@ -32,36 +33,36 @@ def chatbot_response(user_input):
     return "I'm sorry, I didn't understand that. Could you please rephrase?"
 
 
-st.title("Customer Support Chatbot(Rule based)")
+# Initialize session state for chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-user_input = st.text_input("You:")
+st.title("Customer Support Chatbot (Rule based)")
 
-if st.button("Send"):
+# Display chat history one by one
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Input area
+user_input = st.chat_input("Type your message here...")
+
+if user_input:
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    
+    # Display user message
+    with st.chat_message("user"):
+        st.markdown(user_input)
+    
+    # Get bot response
     response = chatbot_response(user_input)
-    st.write("Bot:", response)
+    
+    # Add bot response to history
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    
+    # Display bot response
+    with st.chat_message("assistant"):
+        st.markdown(response)
 
 
-
-
-#we used regular expression for pattern matching.we can also use string match instaed
-
-#  if "hi" in user_input or "hello" in user_input or "hey" in user_input:
-#         return "Hello! Welcome to our store. How can I help you?"
-
-#     elif "order" in user_input or "track" in user_input:
-#         return "You can track your order in the 'My Orders' section."
-
-#     elif "shipping" in user_input or "delivery" in user_input:
-#         return "Shipping usually takes 3-5 business days."
-
-#     elif "return" in user_input or "refund" in user_input:
-#         return "You can return items within 30 days for a full refund."
-
-#     elif "payment" in user_input:
-#         return "We accept credit cards, debit cards, and PayPal."
-
-#     elif "bye" in user_input or "exit" in user_input:
-#         return "Thanks for visiting! Have a great day."
-
-#     else:
-#         return "Sorry, I didn't understand that."
