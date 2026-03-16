@@ -1,3 +1,4 @@
+from config.prompts import PROMPTS
 import os
 from dotenv import load_dotenv
 
@@ -149,15 +150,9 @@ def rerank(query, docs, top_n=3):
 
 def expand_query(query):
 
-    prompt = f"""
-Rewrite the user question into a better search query
-for retrieving information from a technical document.
-
-Return only the improved query.
-
-Question:
-{query}
-"""
+    prompt =  PROMPTS["query_expansion"].format(
+    question=query
+)
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
@@ -197,22 +192,11 @@ def ask_question(question):
 
         context += f"[Source {i+1} - Page {page}]\n{doc.page_content}\n\n"
 
-    prompt = f"""
-
-    You must answer ONLY using the provided context.
-
-    If the context does not contain the answer,reply exactly:
-
-    "The document does not contain this information."
-
-    Cite sources like [Source 1].
-
-    Context:
-    {context}
-
-    Question:
-    {question}
-    """
+    prompt = PROMPTS["rag_answer"].format(
+    context=context,
+    question=question
+)
+    
 
     response = client.models.generate_content(
         model="gemini-2.0-flash",
