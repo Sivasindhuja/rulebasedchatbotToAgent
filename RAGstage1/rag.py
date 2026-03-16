@@ -8,23 +8,38 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from langchain_chroma import Chroma
 
+from langchain_core.documents import Document
+
 from google import genai
 
 
 # Load gemini API Key
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
+#create a google gen ai client
 client = genai.Client(api_key=api_key)
 
 # Step 1: Load PDF using pypdf
 def load_pdf(path):
     reader = PdfReader(path)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() + "\n"
-    return text
+    documents = []
 
-text = load_pdf("satcom-ngp.pdf")
+    for page_num, page in enumerate(reader.pages):
+        text = page.extract_text()
+        documents.append(
+            Document(
+                page_content=text,
+                metadata={
+                    "source": path,
+                    "page": page_num + 1
+                }
+            )
+        )
+
+    return documents
+
+docs= load_pdf("satcom-ngp.pdf")
+# print(docs)
 
 print("Document loaded")
 
@@ -36,9 +51,10 @@ splitter = RecursiveCharacterTextSplitter(
     chunk_overlap=150
 )
 
-chunks = splitter.split_text(text)
+chunks = splitter.split_documents(docs)
 
 print("Total chunks:", len(chunks))
+# print(chunks)
 
 
 # Step 3: Embeddings
@@ -48,13 +64,14 @@ embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-# Step 4: Create ChromaDB
-
-vectorstore = Chroma.from_texts(
-    texts=chunks,
+# Step 4: Create ChromaDB3
+vectorstore = Chroma.from_documents(
+    chunks,
     embedding=embeddings,
     persist_directory="./chroma_db"
 )
+
+
 
 print("Vector DB created")
 
@@ -68,17 +85,23 @@ print("Vector DB created")
 retriever = vectorstore.as_retriever(
     search_kwargs={"k": 3}
 )
+print(retriever)
 
 
-# -----------------------------
 # Step 6: Ask Question
-# -----------------------------
 
 def ask_question(question):
     docs = retriever.invoke(question)
-    context = "\n\n".join([doc.page_content for doc in docs])
+    # context = "\n\n".join([doc.page_content for doc in docs])
+    context = ""
+    for i, doc in enumerate(docs):
+        context += f"[Source {i+1}]\n{doc.page_content}\n\n"
     prompt = f"""
 Answer the question using ONLY the context below.
+Answer the question using ONLY the context.
+
+Cite the source number like [Source 1].
+If the answer is not in the context say "I don't know".
 Context:
 {context}
 Question:
