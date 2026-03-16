@@ -13,6 +13,11 @@ client = genai.Client(api_key=api_key)
 SYSTEM_PROMPT = """
 You are a helpful customer support chatbot for an online store.
 
+Policies:
+- Refund can be done in the 7 days of delivery.
+- Shipping takes 3-5 business days.
+- We accept credit cards, debit cards, and PayPal.
+
 Rules:
 - Answer politely.
 - Keep responses short.
@@ -73,7 +78,7 @@ if prompt:
         st.write(prompt)
 
     # Gemini response
-    reply = ask_gemini(prompt)
+    reply = ask_gemini()
 
     # Show bot response
     st.session_state.messages.append({"role": "assistant", "content": reply})
