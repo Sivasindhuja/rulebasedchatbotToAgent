@@ -203,7 +203,7 @@ def ask_question(question):
         contents=prompt
     )
 
-    return response.text
+    return response.text,docs
 
 
 #chat loop
