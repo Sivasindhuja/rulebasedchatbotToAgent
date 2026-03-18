@@ -122,11 +122,8 @@ def ask_question(question: str, k: int = 3) -> dict:
     context = "\n\n".join(doc.page_content for doc in docs)
     prompt = f"""
 Answer the question using only the context below.
-Answer the question using ONLY the context.
-
-Cite the source number like [Source 1].
-If the answer is not in the context say "I don't know".
-
+If the context doesn't contain the answer, say you don't know.
+Be concise.
 Context:
 {context}
 
