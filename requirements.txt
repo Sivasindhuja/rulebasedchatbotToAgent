@@ -1,6 +1,0 @@
- pypdf 
- langchain 
- langchain-text-splitters 
- sentence-transformers
-  langchain-experimental
-  langchain-huggingface 

@@ -9,28 +9,27 @@ def load_pdf(path):
 
     return text
 
-
-text = load_pdf("satcom-ngp.pdf")
+text = load_pdf("./chunkingPractise/satcom-ngp.pdf")
 
 print("Total characters:", len(text))
 
 
-#fixed length chunking
+#fixed length chunking with overlap
 
-def fixed_length_chunking(text, chunk_size=500):
+def fixed_length_chunking(text, chunk_size=500, chunk_overlap=0):
     chunks = []
 
-    for i in range(0, len(text), chunk_size):
+    for i in range(0, len(text), chunk_size - chunk_overlap):
         chunks.append(text[i:i+chunk_size])
-
+    
     return chunks
 
 
 fixed_chunks = fixed_length_chunking(text)
 
-print("\n--- Fixed Length Chunking ---")
-print("Total chunks:", len(fixed_chunks))
-print(fixed_chunks[0])
+# print("\n--- Fixed Length Chunking ---")
+# print("Total chunks:", len(fixed_chunks))
+# print(fixed_chunks[0])
 
 
 #recursive charcater chunking
@@ -44,9 +43,9 @@ recursive_splitter = RecursiveCharacterTextSplitter(
 
 recursive_chunks = recursive_splitter.split_text(text)
 
-print("\n--- Recursive Chunking ---")
-print("Total chunks:", len(recursive_chunks))
-print(recursive_chunks[0])
+# print("\n--- Recursive Chunking ---")
+# print("Total chunks:", len(recursive_chunks))
+# print(recursive_chunks[0])
 
 
 #with custom seperators
@@ -59,9 +58,9 @@ recursive_splitter_custom = RecursiveCharacterTextSplitter(
 
 custom_chunks = recursive_splitter_custom.split_text(text)
 
-print("\n--- Recursive Splitting (Custom) ---")
-print("Total chunks:", len(custom_chunks))
-print(custom_chunks[0])
+# print("\n--- Recursive Splitting (Custom) ---")
+# print("Total chunks:", len(custom_chunks))
+# print(custom_chunks[0])
 
 #semantic chunking
 
@@ -76,9 +75,9 @@ semantic_splitter = SemanticChunker(embeddings)
 
 semantic_chunks = semantic_splitter.split_text(text)
 
-print("\n--- Semantic Chunking ---")
-print("Total chunks:", len(semantic_chunks))
-print(semantic_chunks[0])
+# print("\n--- Semantic Chunking ---")
+# print("Total chunks:", len(semantic_chunks))
+# print(semantic_chunks[0])
 
 def show_chunks(chunks, name):
     print(f"\n{name}")
