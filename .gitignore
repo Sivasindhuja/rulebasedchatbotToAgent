@@ -7,3 +7,4 @@ README.md
 **/*.pyc
 __pycache__/
 chroma_db/
+**/output/
